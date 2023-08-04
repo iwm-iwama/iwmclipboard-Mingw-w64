@@ -1,6 +1,6 @@
 【実行に必要なファイル】
 
-	iwmClipboard.exe
+	iwmclipboard.exe
 
 【このプログラムについて】
 
