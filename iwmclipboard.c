@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-#define   IWM_VERSION         "iwmClipPathname_20230811"
+#define   IWM_VERSION         "iwmClipPathname_20230828"
 #define   IWM_COPYRIGHT       "Copyright (C)2023 iwm-iwama"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
@@ -124,12 +124,15 @@ iClipboard_print()
 VOID
 print_version()
 {
-	P(ICLR_STR2);
+	P1(IESC_STR2);
 	LN(80);
-	P(" %s\n", IWM_COPYRIGHT);
-	P("    Ver.%s+%s\n", IWM_VERSION, LIB_IWMUTIL_VERSION);
+	P(
+		" %s\n"
+		"    Ver.%s+%s\n"
+		, IWM_COPYRIGHT, IWM_VERSION, LIB_IWMUTIL_VERSION
+	);
 	LN(80);
-	P(ICLR_RESET);
+	P1(IESC_RESET);
 }
 
 VOID
@@ -138,28 +141,38 @@ print_help()
 	MS *_cmd = W2M($CMD);
 
 	print_version();
-	P("%s サンプル %s\n", ICLR_TITLE1, ICLR_RESET);
-	P("%s    %s %s[Option] %s[STR ...]\n", ICLR_STR1, _cmd, ICLR_OPT2, ICLR_OPT1);
-	P("\n");
-	P("%s (例１) %s-set 引数渡し\n", ICLR_LBL1, ICLR_STR1);
-	P("%s    %s %s-set %s\"c:\" %s\"d:\"\n", ICLR_STR1, _cmd, ICLR_OPT2, ICLR_OPT1, ICLR_OPT1);
-	P("\n");
-	P("%s (例２) %s-set パイプ渡し\n", ICLR_LBL1, ICLR_STR1);
-	P("%s    dir | %s%s %s-set\n", ICLR_OPT1, ICLR_STR1, _cmd, ICLR_OPT2);
-	P("\n");
-	P("%s (例３) %s-get\n", ICLR_LBL1, ICLR_STR1);
-	P("%s    %s %s-get\n", ICLR_STR1, _cmd, ICLR_OPT2);
-	P("\n");
-	P("%s [Option]\n", ICLR_OPT2);
-	P("%s    -set STR ...\n", ICLR_OPT21);
-	P("%s        クリップボードにコピー\n", ICLR_STR1);
-	P("\n");
-	P("%s    -get\n", ICLR_OPT21);
-	P("%s        クリップボードの内容を表示\n", ICLR_STR1);
-	P("\n");
-	P(ICLR_STR2);
+	P(
+		IESC_TITLE1	" クリップボード "
+		IESC_RESET	"\n"
+		IESC_STR1	"    %s"
+		IESC_OPT2	" [Option]"
+		IESC_OPT1	" [STR ...]\n\n"
+		IESC_LBL1	" (例１)"
+		IESC_STR1	" -set 引数渡し\n"
+					"    %s"
+		IESC_OPT2	" -set"
+		IESC_OPT1	" \"c:\" \"d:\"\n\n"
+		IESC_LBL1	" (例２)"
+		IESC_STR1	" -set パイプ渡し\n"
+		IESC_OPT1	"    dir |"
+		IESC_STR1	" %s"
+		IESC_OPT2	" -set\n\n"
+		IESC_LBL1	" (例３)"
+		IESC_STR1	" -get\n"
+					"    %s"
+		IESC_OPT2	" -get\n\n"
+		, _cmd, _cmd, _cmd, _cmd
+	);
+	P1(
+		IESC_OPT2	" [Option]\n"
+		IESC_OPT21	"    -set STR ...\n"
+		IESC_STR1	"        クリップボードにコピー\n\n"
+		IESC_OPT21	"    -get\n"
+		IESC_STR1	"        クリップボードの内容を表示\n\n"
+	);
+	P1(IESC_STR2);
 	LN(80);
-	P(ICLR_RESET);
+	P1(IESC_RESET);
 
 	ifree(_cmd);
 }
