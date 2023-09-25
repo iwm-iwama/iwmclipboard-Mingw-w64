@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-#define   IWM_VERSION         "iwmClipPathname_20230828"
+#define   IWM_VERSION         "iwmClipPathname_20230918"
 #define   IWM_COPYRIGHT       "Copyright (C)2023 iwm-iwama"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
@@ -50,9 +50,8 @@ main()
 			for(UINT64 _u1 = 1; _u1 < $ARGC; _u1++)
 			{
 				WS *_wp1 = $ARGV[_u1];
-
 				pEnd += iwn_cpy(pEnd, _wp1);
-				if(iFchk_typePathW(_wp1) == 1)
+				if(iFchk_DirNameW(_wp1))
 				{
 					pEnd += iwn_cpy(pEnd, L"\\");
 				}
