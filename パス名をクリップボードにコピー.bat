@@ -7,7 +7,7 @@ if "%~1" == "" (
 	exit
 )
 
-iwmclipboard.exe -set %*
+iwmclipboard.exe -set2 %*
 
 ::iwmclipboard.exe -get
 ::pause
