@@ -1,7 +1,7 @@
 @echo off
 
 if "%~1" == "" (
-	echo ƒtƒHƒ‹ƒ_^ƒtƒ@ƒCƒ‹‚ðƒhƒ‰ƒbƒO‚µ‚Ä‚­‚¾‚³‚¢B
+	echo ãƒ•ã‚©ãƒ«ãƒ€ï¼ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ‰ãƒ©ãƒƒã‚°ã—ã¦ãã ã•ã„ã€‚
 	echo.
 	pause
 	exit

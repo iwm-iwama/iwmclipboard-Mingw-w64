@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
-#define   IWM_VERSION         "iwmclipboard_20231018"
-#define   IWM_COPYRIGHT       "Copyright (C)2023 iwm-iwama"
+#define   IWM_COPYRIGHT       "(C)2023 iwm-iwama"
+#define   IWM_VERSION         "iwmclipboard_20231225"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
@@ -18,51 +18,64 @@ main()
 	// lib_iwmutil2 初期化
 	imain_begin();
 
-	// -h | -help
+	// -h | --help
 	if(! $ARGC || iCLI_getOptMatch(0, L"-h", L"--help"))
 	{
 		print_help();
+		imain_end();
 	}
-	// -v | -version
-	else if(iCLI_getOptMatch(0, L"-v", L"--version"))
+
+	// -v | --version
+	if(iCLI_getOptMatch(0, L"-v", L"--version"))
 	{
 		print_version();
+		imain_end();
 	}
 
-	BOOL bSet  = iCLI_getOptMatch(0, L"-set",  NULL);
-	BOOL bSet2 = iCLI_getOptMatch(0, L"-set2", NULL);
-	BOOL bGet  = iCLI_getOptMatch(0, L"-get",  NULL);
-	BOOL bSget = iCLI_getOptMatch(0, L"-sget", NULL);
-
 	// -set
-	if(bSet)
+	if(iCLI_getOptMatch(0, L"-set",   L"-s"))
 	{
 		iClipboard_setText($ARGC, FALSE);
 	}
 	// -set2
-	else if(bSet2)
+	else if(iCLI_getOptMatch(0, L"-set2",  L"-s2"))
 	{
 		iClipboard_setText($ARGC, TRUE);
-		P("\033[96mクリップボードにコピーしました。（%lu行／%lu文字）\033[0m\n", SetText_Row, SetText_Len);
-		P1("\033[94m");
+		// (例) ls -la | iwmclipboard -set2 のとき、
+		//   稀にエスケープシーケンスが機能しなくなることがある。
+		//   誤表示されたESC文字を上書き消去するため "\r" を使用する。
+		P(
+			IESC_TRUE1
+			"\r"
+			"クリップボードにコピーしました。（%lu行／%lu文字）\n"
+			IESC_RESET
+			"\r"
+			, SetText_Row, SetText_Len
+		);
 		iClipboard_print();
-		P2("\033[0m");
-
-		Sleep(3000);
+		Sleep(2000);
 	}
 	// -get
-	else if(bGet)
+	else if(iCLI_getOptMatch(0, L"-get",   L"-g"))
 	{
 		iClipboard_print();
 	}
 	// -sget
-	else if(bSget)
+	else if(iCLI_getOptMatch(0, L"-sget",  L"-sg"))
 	{
 		iClipboard_setText($ARGC, FALSE);
 		iClipboard_print();
 	}
+	// -clear
+	else if(iCLI_getOptMatch(0, L"-clear", L"-c"))
+	{
+		if(OpenClipboard(NULL))
+		{
+			EmptyClipboard();
+			CloseClipboard();
+		}
+	}
 
-	// Debug
 	///icalloc_mapPrint(); ifree_all(); icalloc_mapPrint();
 
 	// 最終処理
@@ -108,26 +121,19 @@ iClipboard_setText(
 		SetText_Row = iwn_searchCnt(str, L"\n");
 	}
 
-	// 文字長=0 のとき クリップボードをクリア
 	HGLOBAL hg = GlobalAlloc(GMEM_DDESHARE | GMEM_MOVEABLE, ((u1 + 1) * sizeof(WS)));
-	if(! hg)
+	if(hg)
 	{
-		return;
+		WS *p1 = GlobalLock(hg);
+		iwn_cpy(p1, str);
+		GlobalUnlock(hg);
+		if(OpenClipboard(NULL))
+		{
+			EmptyClipboard();
+			SetClipboardData(CF_UNICODETEXT, hg);
+			CloseClipboard();
+		}
 	}
-
-	WS *p1 = GlobalLock(hg);
-	iwn_cpy(p1, str);
-	GlobalUnlock(hg);
-	ifree(str);
-
-	if(! OpenClipboard(NULL))
-	{
-		return;
-	}
-
-	EmptyClipboard();
-	SetClipboardData(CF_UNICODETEXT, hg);
-	CloseClipboard();
 }
 
 VOID
@@ -144,8 +150,10 @@ iClipboard_print()
 		return;
 	}
 
-	WS *p1 = GlobalLock(hg);
-	P1W(p1);
+	WS *wp1 = GlobalLock(hg);
+	MS *mp1 = W2M(wp1);
+		P1(mp1);
+	ifree(mp1);
 	GlobalUnlock(hg);
 	CloseClipboard();
 }
@@ -157,7 +165,7 @@ print_version()
 	LN(80);
 	P(
 		" %s\n"
-		"    Ver.%s+%s\n"
+		"    %s+%s\n"
 		, IWM_COPYRIGHT, IWM_VERSION, LIB_IWMUTIL_VERSION
 	);
 	LN(80);
@@ -177,9 +185,9 @@ print_help()
 		IESC_OPT2	" [Option]"
 		IESC_OPT1	" [STR ...]\n\n"
 		IESC_LBL1	" (例１)"
-		IESC_STR1	" -set  引数渡し\n"
+		IESC_STR1	" -set2 引数渡し\n"
 					"    %s"
-		IESC_OPT2	" -set"
+		IESC_OPT2	" -set2"
 		IESC_OPT1	" \"c:\" \"d:\"\n\n"
 		IESC_LBL1	" (例２)"
 		IESC_STR1	" -set2 パイプ渡し\n"
@@ -190,14 +198,16 @@ print_help()
 	);
 	P1(
 		IESC_OPT2	" [Option]\n"
-		IESC_OPT21	"    -set STR ...\n"
+		IESC_OPT21	"    -set STR ... | -s STR ...\n"
 		IESC_STR1	"        クリップボードにコピー\n\n"
-		IESC_OPT21	"    -set2 STR ...\n"
+		IESC_OPT21	"    -set2 STR ... | -s2 STR ...\n"
 		IESC_STR1	"        クリップボードにコピー／情報表示\n\n"
-		IESC_OPT21	"    -get\n"
+		IESC_OPT21	"    -get | -g\n"
 		IESC_STR1	"        クリップボードの内容を表示\n\n"
-		IESC_OPT21	"    -sget\n"
+		IESC_OPT21	"    -sget | -sg\n"
 		IESC_STR1	"        クリップボードにコピー／内容を表示\n\n"
+		IESC_OPT21	"    -clear | -c\n"
+		IESC_STR1	"        クリップボードをクリア\n\n"
 	);
 	P1(IESC_STR2);
 	LN(80);
