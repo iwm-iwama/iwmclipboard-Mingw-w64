@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
-#define   IWM_COPYRIGHT       "(C)2023 iwm-iwama"
-#define   IWM_VERSION         "iwmclipboard_20231225"
+#define   IWM_COPYRIGHT       "(C)2023-2024 iwm-iwama"
+#define   IWM_VERSION         "iwmclipboard_20240109"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
@@ -50,7 +50,9 @@ main()
 			"クリップボードにコピーしました。（%lu行／%lu文字）\n"
 			IESC_RESET
 			"\r"
-			, SetText_Row, SetText_Len
+			,
+			SetText_Row,
+			SetText_Len
 		);
 		iClipboard_print();
 		Sleep(2000);
@@ -166,7 +168,10 @@ print_version()
 	P(
 		" %s\n"
 		"    %s+%s\n"
-		, IWM_COPYRIGHT, IWM_VERSION, LIB_IWMUTIL_VERSION
+		,
+		IWM_COPYRIGHT,
+		IWM_VERSION,
+		LIB_IWMUTIL_VERSION
 	);
 	LN(80);
 	P1(IESC_RESET);
@@ -175,7 +180,7 @@ print_version()
 VOID
 print_help()
 {
-	MS *_cmd = W2M($CMD);
+	MS *_cmd = "iwmclipboard.exe";
 
 	print_version();
 	P(
@@ -194,7 +199,10 @@ print_help()
 		IESC_OPT1	"    dir |"
 		IESC_STR1	" %s"
 		IESC_OPT2	" -set2\n\n"
-		, _cmd, _cmd, _cmd, _cmd
+		,
+		_cmd,
+		_cmd,
+		_cmd
 	);
 	P1(
 		IESC_OPT2	" [Option]\n"
@@ -212,6 +220,4 @@ print_help()
 	P1(IESC_STR2);
 	LN(80);
 	P1(IESC_RESET);
-
-	ifree(_cmd);
 }
