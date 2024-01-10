@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 #define   IWM_COPYRIGHT       "(C)2023-2024 iwm-iwama"
-#define   IWM_VERSION         "iwmclipboard_20240109"
+#define   IWM_VERSION         "iwmclipboard_20240110"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
@@ -41,12 +41,9 @@ main()
 	else if(iCLI_getOptMatch(0, L"-set2",  L"-s2"))
 	{
 		iClipboard_setText($ARGC, TRUE);
-		// (例) ls -la | iwmclipboard -set2 のとき、
-		//   稀にエスケープシーケンスが機能しなくなることがある。
-		//   誤表示されたESC文字を上書き消去するため "\r" を使用する。
+		SetConsoleOutputCP(65001);
 		P(
 			IESC_TRUE1
-			"\r"
 			"クリップボードにコピーしました。（%lu行／%lu文字）\n"
 			IESC_RESET
 			"\r"
@@ -108,7 +105,7 @@ iClipboard_setText(
 		{
 			WS *_wp1 = $ARGV[_u1];
 			pEnd += iwn_cpy(pEnd, _wp1);
-			if(iFchk_DirNameW(_wp1))
+			if(iFchk_existPathW(_wp1) && iFchk_DirNameW(_wp1))
 			{
 				pEnd += iwn_cpy(pEnd, L"\\");
 			}
