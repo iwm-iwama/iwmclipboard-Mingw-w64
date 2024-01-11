@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 #define   IWM_COPYRIGHT       "(C)2023-2024 iwm-iwama"
-#define   IWM_VERSION         "iwmclipboard_20240110"
+#define   IWM_VERSION         "iwmclipboard_20240111"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
@@ -46,7 +46,6 @@ main()
 			IESC_TRUE1
 			"クリップボードにコピーしました。（%lu行／%lu文字）\n"
 			IESC_RESET
-			"\r"
 			,
 			SetText_Row,
 			SetText_Len
@@ -181,21 +180,20 @@ print_help()
 
 	print_version();
 	P(
-		IESC_TITLE1	" クリップボード "
-		IESC_RESET	"\n"
+		IESC_TITLE1	" クリップボード "	IESC_RESET	"\n\n"
 		IESC_STR1	"    %s"
 		IESC_OPT2	" [Option]"
-		IESC_OPT1	" [STR ...]\n\n"
+		IESC_OPT1	" [PATH ...]\n\n\n"
 		IESC_LBL1	" (例１)"
-		IESC_STR1	" -set2 引数渡し\n"
+		IESC_STR1	" -set2 引数渡し／パス名のみ\n"
 					"    %s"
 		IESC_OPT2	" -set2"
 		IESC_OPT1	" \"c:\" \"d:\"\n\n"
 		IESC_LBL1	" (例２)"
-		IESC_STR1	" -set2 パイプ渡し\n"
-		IESC_OPT1	"    dir |"
+		IESC_STR1	" -set2 パイプ渡し／文字列\n"
+		IESC_OPT1	"    tasklist /v /fo csv |"
 		IESC_STR1	" %s"
-		IESC_OPT2	" -set2\n\n"
+		IESC_OPT2	" -set2\n\n\n"
 		,
 		_cmd,
 		_cmd,
@@ -203,9 +201,9 @@ print_help()
 	);
 	P1(
 		IESC_OPT2	" [Option]\n"
-		IESC_OPT21	"    -set STR ... | -s STR ...\n"
+		IESC_OPT21	"    -set PATH ... | -s PATH ...\n"
 		IESC_STR1	"        クリップボードにコピー\n\n"
-		IESC_OPT21	"    -set2 STR ... | -s2 STR ...\n"
+		IESC_OPT21	"    -set2 PATH ... | -s2 PATH ...\n"
 		IESC_STR1	"        クリップボードにコピー／情報表示\n\n"
 		IESC_OPT21	"    -get | -g\n"
 		IESC_STR1	"        クリップボードの内容を表示\n\n"
