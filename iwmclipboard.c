@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 #define   IWM_COPYRIGHT       "(C)2023-2024 iwm-iwama"
-#define   IWM_VERSION         "iwmclipboard_20240111"
+#define   IWM_VERSION         "iwmclipboard_20240118"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
@@ -104,7 +104,7 @@ iClipboard_setText(
 		{
 			WS *_wp1 = $ARGV[_u1];
 			pEnd += iwn_cpy(pEnd, _wp1);
-			if(iFchk_existPathW(_wp1) && iFchk_DirNameW(_wp1))
+			if(iFchk_existPath(_wp1) && iFchk_DirName(_wp1))
 			{
 				pEnd += iwn_cpy(pEnd, L"\\");
 			}
@@ -116,7 +116,7 @@ iClipboard_setText(
 	if(bGetLenRow)
 	{
 		SetText_Len = u1;
-		SetText_Row = iwn_searchCnt(str, L"\n");
+		SetText_Row = iwn_search(str, L"\n");
 	}
 
 	HGLOBAL hg = GlobalAlloc(GMEM_DDESHARE | GMEM_MOVEABLE, ((u1 + 1) * sizeof(WS)));
