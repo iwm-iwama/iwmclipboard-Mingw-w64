@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 #define   IWM_COPYRIGHT       "(C)2023-2024 iwm-iwama"
-#define   IWM_VERSION         "iwmclipboard_20240118"
+#define   IWM_VERSION         "iwmclipboard_20240309"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
@@ -44,11 +44,11 @@ main()
 		SetConsoleOutputCP(65001);
 		P(
 			IESC_TRUE1
-			"クリップボードにコピーしました。（%lu行／%lu文字）\n"
+			"クリップボードにコピーしました。（%lu文字／%lu行）\n"
 			IESC_RESET
 			,
-			SetText_Row,
-			SetText_Len
+			SetText_Len,
+			SetText_Row
 		);
 		iClipboard_print();
 		Sleep(2000);
@@ -74,7 +74,7 @@ main()
 		}
 	}
 
-	///icalloc_mapPrint(); ifree_all(); icalloc_mapPrint();
+	///idebug_map(); ifree_all(); idebug_map();
 
 	// 最終処理
 	imain_end();
@@ -116,7 +116,7 @@ iClipboard_setText(
 	if(bGetLenRow)
 	{
 		SetText_Len = u1;
-		SetText_Row = iwn_search(str, L"\n");
+		SetText_Row = iwn_searchCnt(str, L"\n", FALSE);
 	}
 
 	HGLOBAL hg = GlobalAlloc(GMEM_DDESHARE | GMEM_MOVEABLE, ((u1 + 1) * sizeof(WS)));
