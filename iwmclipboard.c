@@ -1,22 +1,32 @@
 //------------------------------------------------------------------------------
 #define   IWM_COPYRIGHT       "(C)2023-2024 iwm-iwama"
-#define   IWM_VERSION         "iwmclipboard_20240309"
+#define   IWM_VERSION         "iwmclipboard_20240519"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
 INT       main();
-VOID      iClipboard_setText(INT argc, BOOL bGetLenRow);
-UINT      SetText_Len = 0;
-UINT      SetText_Row = 0;
-VOID      iClipboard_print();
+VOID      subClipboard_set(INT argc, BOOL bGetLenRow);
+VOID      subClipboard_print();
 VOID      print_version();
 VOID      print_help();
+
+struct Struct_subClipboard
+{
+	UINT len; // 文字数／'\r' '\n' 含む
+	UINT row; // 行数
+}
+subClipboard = {
+	.len = 0,
+	.row = 0
+};
 
 INT
 main()
 {
 	// lib_iwmutil2 初期化
 	imain_begin();
+
+	///iCLI_VarList();
 
 	// -h | --help
 	if(! $ARGC || iCLI_getOptMatch(0, L"-h", L"--help"))
@@ -35,34 +45,34 @@ main()
 	// -set
 	if(iCLI_getOptMatch(0, L"-set",   L"-s"))
 	{
-		iClipboard_setText($ARGC, FALSE);
+		subClipboard_set($ARGC, FALSE);
 	}
 	// -set2
 	else if(iCLI_getOptMatch(0, L"-set2",  L"-s2"))
 	{
-		iClipboard_setText($ARGC, TRUE);
-		SetConsoleOutputCP(65001);
+		subClipboard_set($ARGC, TRUE);
+		subClipboard_print();
+		NL();
 		P(
 			IESC_TRUE1
 			"クリップボードにコピーしました。（%lu文字／%lu行）\n"
 			IESC_RESET
 			,
-			SetText_Len,
-			SetText_Row
+			subClipboard.len,
+			subClipboard.row
 		);
-		iClipboard_print();
 		Sleep(2000);
 	}
 	// -get
 	else if(iCLI_getOptMatch(0, L"-get",   L"-g"))
 	{
-		iClipboard_print();
+		subClipboard_print();
 	}
 	// -sget
 	else if(iCLI_getOptMatch(0, L"-sget",  L"-sg"))
 	{
-		iClipboard_setText($ARGC, FALSE);
-		iClipboard_print();
+		subClipboard_set($ARGC, FALSE);
+		subClipboard_print();
 	}
 	// -clear
 	else if(iCLI_getOptMatch(0, L"-clear", L"-c"))
@@ -81,7 +91,7 @@ main()
 }
 
 VOID
-iClipboard_setText(
+subClipboard_set(
 	INT argc,
 	BOOL bGetLenRow
 )
@@ -112,48 +122,21 @@ iClipboard_setText(
 		}
 	}
 
-	u1 = wcslen(str);
 	if(bGetLenRow)
 	{
-		SetText_Len = u1;
-		SetText_Row = iwn_searchCnt(str, L"\n", FALSE);
+		subClipboard.len = wcslen(str);
+		subClipboard.row = iwn_searchCnt(str, L"\n", FALSE);
 	}
 
-	HGLOBAL hg = GlobalAlloc(GMEM_DDESHARE | GMEM_MOVEABLE, ((u1 + 1) * sizeof(WS)));
-	if(hg)
-	{
-		WS *p1 = GlobalLock(hg);
-		iwn_cpy(p1, str);
-		GlobalUnlock(hg);
-		if(OpenClipboard(NULL))
-		{
-			EmptyClipboard();
-			SetClipboardData(CF_UNICODETEXT, hg);
-			CloseClipboard();
-		}
-	}
+	iClipboard_setText(str);
 }
 
 VOID
-iClipboard_print()
+subClipboard_print()
 {
-	if(! OpenClipboard(NULL))
-	{
-		return;
-	}
-
-	HANDLE hg = GetClipboardData(CF_UNICODETEXT);
-	if(! hg)
-	{
-		return;
-	}
-
-	WS *wp1 = GlobalLock(hg);
-	MS *mp1 = W2M(wp1);
-		P1(mp1);
-	ifree(mp1);
-	GlobalUnlock(hg);
-	CloseClipboard();
+	WS *wp1 = iClipboard_getText();
+		P1W(wp1);
+	ifree(wp1);
 }
 
 VOID
