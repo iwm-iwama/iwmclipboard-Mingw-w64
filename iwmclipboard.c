@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 #define   IWM_COPYRIGHT       "(C)2023-2024 iwm-iwama"
-#define   IWM_VERSION         "iwmclipboard_20240519"
+#define   IWM_VERSION         "iwmclipboard_20240522"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
@@ -101,7 +101,7 @@ subClipboard_set(
 
 	if(argc < 2)
 	{
-		str = iCLI_GetStdin();
+		str = iCLI_GetStdin(FALSE);
 	}
 	else
 	{
@@ -135,6 +135,7 @@ VOID
 subClipboard_print()
 {
 	WS *wp1 = iClipboard_getText();
+		IESC();
 		P1W(wp1);
 	ifree(wp1);
 }
