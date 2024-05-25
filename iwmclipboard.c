@@ -1,12 +1,12 @@
 //------------------------------------------------------------------------------
 #define   IWM_COPYRIGHT       "(C)2023-2024 iwm-iwama"
-#define   IWM_VERSION         "iwmclipboard_20240522"
+#define   IWM_VERSION         "iwmclipboard_20240524"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
 INT       main();
 VOID      subClipboard_set(INT argc, BOOL bGetLenRow);
-VOID      subClipboard_print();
+VOID      subClipboard_print(BOOL bEscOn);
 VOID      print_version();
 VOID      print_help();
 
@@ -51,7 +51,7 @@ main()
 	else if(iCLI_getOptMatch(0, L"-set2",  L"-s2"))
 	{
 		subClipboard_set($ARGC, TRUE);
-		subClipboard_print();
+		subClipboard_print(TRUE);
 		NL();
 		P(
 			IESC_TRUE1
@@ -66,13 +66,12 @@ main()
 	// -get
 	else if(iCLI_getOptMatch(0, L"-get",   L"-g"))
 	{
-		subClipboard_print();
+		subClipboard_print(TRUE);
 	}
-	// -sget
-	else if(iCLI_getOptMatch(0, L"-sget",  L"-sg"))
+	// -get2
+	else if(iCLI_getOptMatch(0, L"-get2",   L"-g2"))
 	{
-		subClipboard_set($ARGC, FALSE);
-		subClipboard_print();
+		subClipboard_print(FALSE);
 	}
 	// -clear
 	else if(iCLI_getOptMatch(0, L"-clear", L"-c"))
@@ -132,11 +131,21 @@ subClipboard_set(
 }
 
 VOID
-subClipboard_print()
+subClipboard_print(
+	BOOL bEscOn // TRUE=ソノママ印字／FALSE=ESC(\033[...)を消去して印字
+)
 {
 	WS *wp1 = iClipboard_getText();
-		IESC();
-		P1W(wp1);
+		if(bEscOn)
+		{
+			P1W(wp1);
+		}
+		else
+		{
+			WS *wp2 = iws_withoutESC(wp1);
+				P1W(wp2);
+			ifree(wp2);
+		}
 	ifree(wp1);
 }
 
@@ -191,8 +200,8 @@ print_help()
 		IESC_STR1	"        クリップボードにコピー／情報表示\n\n"
 		IESC_OPT21	"    -get | -g\n"
 		IESC_STR1	"        クリップボードの内容を表示\n\n"
-		IESC_OPT21	"    -sget | -sg\n"
-		IESC_STR1	"        クリップボードにコピー／内容を表示\n\n"
+		IESC_OPT21	"    -get2 | -g2\n"
+		IESC_STR1	"        クリップボードの内容を表示（ESC文字除去）\n\n"
 		IESC_OPT21	"    -clear | -c\n"
 		IESC_STR1	"        クリップボードをクリア\n\n"
 	);
