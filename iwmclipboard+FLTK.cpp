@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 #define   IWM_COPYRIGHT       "(C)2024 iwm-iwama"
-#define   IWM_VERSION         "iwmclipboard+FLTK_20240519"
+#define   IWM_FILENAME        "iwmclipboard+FLTK"
+#define   IWM_UPDATE          "20240519"
 //------------------------------------------------------------------------------
 extern "C"
 {

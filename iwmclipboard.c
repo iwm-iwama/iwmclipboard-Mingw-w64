@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 #define   IWM_COPYRIGHT       "(C)2023-2024 iwm-iwama"
-#define   IWM_VERSION         "iwmclipboard_20240524"
+#define   IWM_FILENAME        "iwmclipboard"
+#define   IWM_UPDATE          "20240524"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
@@ -154,13 +155,9 @@ print_version()
 {
 	P1(IESC_STR2);
 	LN(80);
-	P(
-		" %s\n"
-		"    %s+%s\n"
-		,
-		IWM_COPYRIGHT,
-		IWM_VERSION,
-		LIB_IWMUTIL_VERSION
+	P1(
+		" " IWM_COPYRIGHT "\n"
+		"    " IWM_FILENAME "_" IWM_UPDATE " + " LIB_IWMUTIL_FILENAME "\n"
 	);
 	LN(80);
 	P1(IESC_RESET);
@@ -169,28 +166,22 @@ print_version()
 VOID
 print_help()
 {
-	MS *_cmd = "iwmclipboard.exe";
-
 	print_version();
-	P(
-		IESC_TITLE1	" クリップボード "	IESC_RESET	"\n\n"
-		IESC_STR1	"    %s"
+	P1(
+		IESC_TITLE1	" クリップボード " IESC_RESET "\n\n"
+		IESC_STR1	"    " IWM_FILENAME
 		IESC_OPT2	" [Option]"
 		IESC_OPT1	" [PATH ...]\n\n\n"
 		IESC_LBL1	" (例１)"
 		IESC_STR1	" -set2 引数渡し／パス名のみ\n"
-					"    %s"
+					"    " IWM_FILENAME
 		IESC_OPT2	" -set2"
 		IESC_OPT1	" \"c:\" \"d:\"\n\n"
 		IESC_LBL1	" (例２)"
 		IESC_STR1	" -set2 パイプ渡し／文字列\n"
 		IESC_OPT1	"    tasklist /v /fo csv |"
-		IESC_STR1	" %s"
+		IESC_STR1	" " IWM_FILENAME
 		IESC_OPT2	" -set2\n\n\n"
-		,
-		_cmd,
-		_cmd,
-		_cmd
 	);
 	P1(
 		IESC_OPT2	" [Option]\n"
