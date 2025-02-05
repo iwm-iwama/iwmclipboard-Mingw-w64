@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-#define   IWM_COPYRIGHT       "(C)2023-2024 iwm-iwama"
+#define   IWM_COPYRIGHT       "(C)2023-2025 iwm-iwama"
 #define   IWM_FILENAME        "iwmclipboard"
-#define   IWM_UPDATE          "20240524"
+#define   IWM_UPDATE          "20250203"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
@@ -156,8 +156,8 @@ print_version()
 	P1(IESC_STR2);
 	LN(80);
 	P1(
-		" " IWM_COPYRIGHT "\n"
-		"    " IWM_FILENAME "_" IWM_UPDATE " + " LIB_IWMUTIL_FILENAME "\n"
+		"\033[2G"	IWM_COPYRIGHT	"\n"
+		"\033[5G"	IWM_FILENAME	"_"	IWM_UPDATE	" + "	LIB_IWMUTIL_FILENAME	"\n"
 	);
 	LN(80);
 	P1(IESC_RESET);
@@ -168,33 +168,32 @@ print_help()
 {
 	print_version();
 	P1(
-		IESC_TITLE1	" クリップボード " IESC_RESET "\n\n"
-		IESC_STR1	"    " IWM_FILENAME
-		IESC_OPT2	" [Option]"
-		IESC_OPT1	" [PATH ...]\n\n\n"
-		IESC_LBL1	" (例１)"
-		IESC_STR1	" -set2 引数渡し／パス名のみ\n"
-					"    " IWM_FILENAME
-		IESC_OPT2	" -set2"
-		IESC_OPT1	" \"c:\" \"d:\"\n\n"
-		IESC_LBL1	" (例２)"
-		IESC_STR1	" -set2 パイプ渡し／文字列\n"
-		IESC_OPT1	"    tasklist /v /fo csv |"
-		IESC_STR1	" " IWM_FILENAME
-		IESC_OPT2	" -set2\n\n\n"
-	);
-	P1(
-		IESC_OPT2	" [Option]\n"
-		IESC_OPT21	"    -set PATH ... | -s PATH ...\n"
-		IESC_STR1	"        クリップボードにコピー\n\n"
-		IESC_OPT21	"    -set2 PATH ... | -s2 PATH ...\n"
-		IESC_STR1	"        クリップボードにコピー／情報表示\n\n"
-		IESC_OPT21	"    -get | -g\n"
-		IESC_STR1	"        クリップボードの内容を表示\n\n"
-		IESC_OPT21	"    -get2 | -g2\n"
-		IESC_STR1	"        クリップボードの内容を表示（ESC文字除去）\n\n"
-		IESC_OPT21	"    -clear | -c\n"
-		IESC_STR1	"        クリップボードをクリア\n\n"
+		"\033[1G"	IESC_TITLE1	" クリップボード "	IESC_RESET	"\n"
+		"\n"
+		"\033[5G"	IESC_STR1	IWM_FILENAME	IESC_OPT2	" [Option]"	IESC_OPT1	" [PATH ...]"	"\n"
+		"\n"
+		"\033[2G"	IESC_LBL1	"(例１)"	IESC_STR1	" -set2 引数渡し／パス名のみ"	"\n"
+		"\033[5G"	IESC_STR1	IWM_FILENAME	IESC_OPT2	" -set2"	IESC_OPT1	" \"c:\" \"d:\""	"\n"
+		"\n"
+		"\033[2G"	IESC_LBL1	"(例２)"	IESC_STR1	" -set2 パイプ渡し／文字列"	"\n"
+		"\033[5G"	IESC_OPT1	"tasklist /v /fo csv | "	IESC_STR1	IWM_FILENAME	IESC_OPT2	" -set2"	"\n"
+		"\n"
+		"\033[2G"	IESC_OPT2	"[Option]"	"\n"
+		"\033[5G"	IESC_OPT21	"-set PATH ... | -s PATH ..."	"\n"
+		"\033[9G"	IESC_STR1	"クリップボードにコピー"	"\n"
+		"\n"
+		"\033[5G"	IESC_OPT21	"-set2 PATH ... | -s2 PATH ..."	"\n"
+		"\033[9G"	IESC_STR1	"クリップボードにコピー／情報表示"	"\n"
+		"\n"
+		"\033[5G"	IESC_OPT21	"-get | -g"	"\n"
+		"\033[9G"	IESC_STR1	"クリップボードを表示"	"\n"
+		"\n"
+		"\033[5G"	IESC_OPT21	"-get2 | -g2"	"\n"
+		"\033[9G"	IESC_STR1	"クリップボードを表示（ESC文字除去）"	"\n"
+		"\n"
+		"\033[5G"	IESC_OPT21	"-clear | -c"	"\n"
+		"\033[9G"	IESC_STR1	"クリップボードをクリア"	"\n"
+		"\n"
 	);
 	P1(IESC_STR2);
 	LN(80);
