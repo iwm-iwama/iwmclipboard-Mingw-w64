@@ -1,12 +1,12 @@
 //------------------------------------------------------------------------------
 #define   IWM_COPYRIGHT       "(C)2023-2025 iwm-iwama"
 #define   IWM_FILENAME        "iwmclipboard"
-#define   IWM_UPDATE          "20250203"
+#define   IWM_UPDATE          "20250214"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
 INT       main();
-VOID      subClipboard_set(INT argc, BOOL bGetLenRow);
+VOID      subClipboard_set(UINT uArgc, BOOL bGetLenRow);
 VOID      subClipboard_print(BOOL bEscOn);
 VOID      print_version();
 VOID      print_help();
@@ -92,43 +92,41 @@ main()
 
 VOID
 subClipboard_set(
-	INT argc,
+	UINT uArgc,
 	BOOL bGetLenRow
 )
 {
-	WS *str = 0;
-	UINT64 u1 = 0;
+	WS *rtn = 0;
 
-	if(argc < 2)
+	if(uArgc < 2)
 	{
-		str = iCLI_GetStdin(FALSE);
+		rtn = iCLI_GetStdin(FALSE);
 	}
 	else
 	{
-		WS *pJoin = L"\n";
-		u1 = iwan_strlen($ARGV) + (iwan_size($ARGV) * wcslen(pJoin));
-		str = icalloc_WS(u1);
-		WS *pEnd = str;
-
-		for(UINT64 _u1 = 1; _u1 < $ARGC; _u1++)
-		{
-			WS *_wp1 = $ARGV[_u1];
-			pEnd += iwn_cpy(pEnd, _wp1);
-			if(iFchk_existPath(_wp1) && iFchk_DirName(_wp1))
+		WS *NL = L"\r\n";
+		UINT u1 = iwan_strlen($ARGV) + (iwan_size($ARGV) * wcslen(NL));
+		rtn = icalloc_WS(u1);
+			WS *pEnd = rtn;
+			for(UINT _u1 = 1; _u1 < $ARGC; _u1++)
 			{
-				pEnd += iwn_cpy(pEnd, L"\\");
+				WS *wp1 = $ARGV[_u1];
+				pEnd += iwn_cpy(pEnd, wp1);
+				if(iFchk_existPath(wp1) && iFchk_DirName(wp1))
+				{
+					pEnd += iwn_cpy(pEnd, L"\\");
+				}
+				pEnd += iwn_cpy(pEnd, NL);
 			}
-			pEnd += iwn_cpy(pEnd, pJoin);
-		}
 	}
 
 	if(bGetLenRow)
 	{
-		subClipboard.len = wcslen(str);
-		subClipboard.row = iwn_searchCnt(str, L"\n", FALSE);
+		subClipboard.len = wcslen(rtn);
+		subClipboard.row = iwn_searchCnt(rtn, L"\n", FALSE);
 	}
 
-	iClipboard_setText(str);
+	iClipboard_setText(rtn);
 }
 
 VOID
