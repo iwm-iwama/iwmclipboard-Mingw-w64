@@ -1,12 +1,13 @@
 //------------------------------------------------------------------------------
 #define   IWM_COPYRIGHT       "(C)2023-2025 iwm-iwama"
 #define   IWM_FILENAME        "iwmclipboard"
-#define   IWM_UPDATE          "20250327"
+#define   IWM_UPDATE          "20250413"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
 INT       main();
 VOID      subClipboard_set(UINT uArgc, BOOL bGetLenRow);
+WS        *rtnClipboard_get(BOOL bGetLenRow);
 VOID      print_version();
 VOID      print_help();
 
@@ -19,8 +20,6 @@ subClipboard = {
 	.len = 0,
 	.row = 0
 };
-
-WS *NL = L"\r\n";
 
 INT
 main()
@@ -63,7 +62,20 @@ main()
 	// -get
 	else if(iCLI_getOptMatch(0, L"-get",   L"-g"))
 	{
-		QP2W(iClipboard_getText());
+		QP2W(rtnClipboard_get(FALSE));
+	}
+	// -get2
+	else if(iCLI_getOptMatch(0, L"-get2",   L"-g2"))
+	{
+		QP2W(rtnClipboard_get(TRUE));
+		P(
+			IESC_LBL2
+			"クリップボードの内容（%u文字／%u行）\n"
+			IESC_RESET
+			, subClipboard.len
+			, subClipboard.row
+		);
+		Sleep(2000);
 	}
 	// -clear
 	else if(iCLI_getOptMatch(0, L"-clear", L"-c"))
@@ -94,7 +106,7 @@ subClipboard_set(
 
 	if(uArgc < 2)
 	{
-		rtn = iCLI_GetStdin(FALSE);
+		rtn = iCLI_getStdin(FALSE);
 	}
 	else
 	{
@@ -103,11 +115,11 @@ subClipboard_set(
 			while($ARGV[u1])
 			{
 				iVBW_push2(iVBW, $ARGV[u1]);
-				if(iFchk_existPath($ARGV[u1]) && iFchk_DirName($ARGV[u1]))
+				if(iF_chkExistPath($ARGV[u1]) && iF_chkDirName($ARGV[u1]))
 				{
 					iVBW_push2(iVBW, L"\\");
 				}
-				iVBW_push2(iVBW, NL);
+				iVBW_push2(iVBW, L"\n");
 				++u1;
 			}
 		rtn = iVBW_free(iVBW);
@@ -121,6 +133,20 @@ subClipboard_set(
 
 	iClipboard_setText(rtn);
 	ifree(rtn);
+}
+
+WS
+*rtnClipboard_get(
+	BOOL bGetLenRow
+)
+{
+	WS *rtn = iClipboard_getText();
+	if(bGetLenRow)
+	{
+		subClipboard.len = wcslen(rtn);
+		subClipboard.row = iwn_searchCnt(rtn, L"\n");
+	}
+	return rtn;
 }
 
 VOID
@@ -160,11 +186,14 @@ print_help()
 		"\033[5G"	IESC_OPT21	"-get | -g"	"\n"
 		"\033[9G"	IESC_STR1	"クリップボードを表示"	"\n"
 		"\n"
+		"\033[5G"	IESC_OPT21	"-get2 | -g2"	"\n"
+		"\033[9G"	IESC_STR1	"クリップボードを表示／情報表示"	"\n"
+		"\n"
 		"\033[5G"	IESC_OPT21	"-clear | -c"	"\n"
 		"\033[9G"	IESC_STR1	"クリップボードをクリア"	"\n"
 		"\n"
 		"\033[5G"	IESC_OPT22	"エスケープシーケンス文字を消去"	"\n"
-		"\033[9G"	IESC_STR1	"別プログラム"	IESC_OPT21	" iwmesc.exe "	IESC_STR1	"を利用してください"	"\n"
+		"\033[9G"	IESC_STR1	"別プログラム"	IESC_LBL3	" iwmesc.exe "	IESC_STR1	"を利用してください"	"\n"
 		"\033[9G"	IESC_LBL1	"(例) "	IESC_STR1	IWM_FILENAME	" -h | iwmesc -text | "	IWM_FILENAME	" -s2"	"\n"
 		"\n"
 	);
