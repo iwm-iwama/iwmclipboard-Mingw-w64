@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 #define IWM_COPYRIGHT "(C)2023-2026 iwm-iwama"
 #define IWM_FILENAME "iwmclipboard"
-#define IWM_UPDATE "20260618"
+#define IWM_UPDATE "20260716"
 //------------------------------------------------------------------------------
 #include "lib_iwmutil2.h"
 
@@ -46,7 +46,9 @@ INT main()
 	else if (iCLI_getOptMatch(0, L"-set2", L"-s2"))
 	{
 		subClipboard_set($ARGC, TRUE);
-		QP2W(iClipboard_getText());
+		WS *wp1 = iClipboard_getText();
+		QP2W(wp1);
+		ifree(wp1);
 		P(
 			IESC_LBL3
 			"クリップボードにコピーしました。（%u文字／%u行）\n" IESC_RESET,
@@ -56,12 +58,16 @@ INT main()
 	// -get
 	else if (iCLI_getOptMatch(0, L"-get", L"-g"))
 	{
-		QP2W(rtnClipboard_get(FALSE));
+		WS *wp1 = rtnClipboard_get(FALSE);
+		QP2W(wp1);
+		ifree(wp1);
 	}
 	// -get2
 	else if (iCLI_getOptMatch(0, L"-get2", L"-g2"))
 	{
-		QP2W(rtnClipboard_get(TRUE));
+		WS *wp1 = rtnClipboard_get(TRUE);
+		QP2W(wp1);
+		ifree(wp1);
 		P(
 			IESC_LBL2
 			"クリップボードの内容（%u文字／%u行）\n" IESC_RESET,
@@ -79,8 +85,6 @@ INT main()
 	}
 
 	// Debug
-	/// idebug_map(NULL);
-	/// ifree_all();
 	/// idebug_map(NULL);
 
 	// 最終処理
